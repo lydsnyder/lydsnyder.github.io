@@ -1,4 +1,6 @@
-        <!-- Sidebar -->
+<?php
+echo '        
+<!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
@@ -29,4 +31,5 @@
                 </li>
             </ul>
         </div>
-        <!-- /#sidebar-wrapper -->
+        <!-- /#sidebar-wrapper -->';
+?>

@@ -12,7 +12,7 @@ echo '
                     <a href="#">DBoop</a>
                 </li>
                 <li>
-                    <a href="#">Shortcuts</a>
+                    <a href="#">Shoopcuts</a>
                 </li>
                 <li>
                     <a href="#">Overview</a>

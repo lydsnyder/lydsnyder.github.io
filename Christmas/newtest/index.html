@@ -18,6 +18,7 @@
     
     <!-- Angular JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="app.js"></script>
 
 </head>
 
@@ -28,7 +29,7 @@
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand" ng-repeat = "member in members track by $index">
-                    <a href="#">
+                    <a href="#" ng-click = "loadMemberData(member)">
                         {{member.name}}
                     </a>
                 </li>
@@ -40,10 +41,14 @@
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <div class="container-fluid">
-                <h1>Simple Sidebar</h1>
-                <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will appear/disappear. On small screens, the page content will be pushed off canvas.</p>
-                <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
+                <h1>{{activeMember.name}}</h1>
                 <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Toggle Menu</a>
+                
+                <ul>
+                    <li ng-repeat = "gifts in activeMemberData.data track by $index" >
+                        {{gifts.gift}}
+                    </li>
+                </ul>
             </div>
         </div>
         <!-- /#page-content-wrapper -->

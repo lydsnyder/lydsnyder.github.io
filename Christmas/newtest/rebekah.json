@@ -1,0 +1,16 @@
+{
+    "name": "rebekah",
+    "data":
+    [
+        {
+            "gift": "money",
+            "claimed": false,
+            "claimee": null
+        },
+        {
+            "gift": "friendship",
+            "claimed": false,
+            "claimee": null
+        }
+    ]
+}

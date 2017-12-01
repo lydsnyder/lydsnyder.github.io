@@ -15,13 +15,27 @@
 
     <!-- Custom styles for this template -->
     <link href="css/simple-sidebar.css" rel="stylesheet">
+    
+    <!-- Angular JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
 </head>
 
-<body>
+<body ng-app = "christmasLists" ng-controller = "listController">
 
     <div id="wrapper">
-    <?php include 'nav.php';?>
+    <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand" ng-repeat = "member in members track by $index">
+                    <a href="#">
+                        {{member.name}}
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
         <div id="page-content-wrapper">

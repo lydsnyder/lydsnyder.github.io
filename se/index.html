@@ -1,12 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
 
-      <title>Dad/Grandpa's List & Claimed Items</title>      
+    <title>Course Mapper</title>
+    <!-- Include this later when d3 gets brought in -->
+    <!--<script src="d3.js"></script>-->
+    <script src="jquery.js"></script>
+    <link rel="stylesheet" src="main.css" href="main.css">
+    
+    <script>
+    
+    var json_request = "http://evanescence.herokuapp.com/get_classes?num=6&department=CMP_SC"
+    
+    // Maybe give this method a try later...
+    /*
+    $.getJSON( json_request, function( data ) {
+        var items = [];
+        $.each( data, function( key, val ) {
+            items.push( "<li id='" + key + "'>" + val + "</li>" );
+        });
 
-  </head>
-    <body>
-    TEST TESTTEST
-    </body>
+        $( "<ul/>", {
+            "class": "my-new-list",
+            html: items.join( "" )
+        }).appendTo( "body" );
+    });
+    */
+    
+    // Just some code to try to help figure out how this works
+    $.getJSON( json_request, function( data ) {
+        console.log("success");
+    })
+        .done(function() {
+            console.log( "second success" );
+        })
+        .fail(function() {
+            console.log( "error" );
+        })
+        .always(function() {
+            console.log( "complete" );
+        });
+        
+    </script>
+
+</head>
+    
+<body>
+    
+    <div id="control_panel">
+        TESTING
+    </div>
+    
+</body>
+    
 </html>

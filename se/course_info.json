@@ -1,0 +1,54 @@
+[
+  {
+    "Description": "(same as ECE 4655; cross-leveled with CMP_SC 7650, ECE 7655). Fundamentals of digital image processing hardware and software including digital image acquisition, image display, image enhancement, image transforms and segmentation.", 
+    "GUID": "CMP_SC4650", 
+    "Hours": "3", 
+    "Prerequisites": [
+      "CMP_SC4610"
+    ], 
+    "Title": "CMP_SC 4650:  Digital Image Processing"
+  }, 
+  {
+    "Description": "(cross-leveled with CMP_SC 7620). This course introduces students to physically based modeling and animation methodology for computer graphics and related fields such as computer vision, visualization, biomedical imaging and virtual reality.  We will explore current research issues and will cover associated computational methods for simulating various visually interesting physical phenomena. This course should be appropriate for graduate students in all areas as well as advanced undergraduate students.", 
+    "GUID": "CMP_SC4620", 
+    "Hours": "3", 
+    "Prerequisites": [
+      "CMP_SC3050", 
+      "MATH1500"
+    ], 
+    "Title": "CMP_SC 4620:  Physically Based Modeling and Animation"
+  }, 
+  {
+    "Description": "(cross-leveled with CMP_SC 7830). This course will study the science and engineering of the World Wide Web. We will study the languages, protocols, services and tools that enable the web. Emphasis will be placed on basics and technologies.", 
+    "GUID": "CMP_SC4830", 
+    "Hours": "3", 
+    "Prerequisites": [], 
+    "Title": "CMP_SC 4830:  Science and Engineering of the World Wide Web"
+  }, 
+  {
+    "Description": "This course introduces the Computer Science field, including the history of computers, career opportunities, and ethical/social issues.  There will be lectures given by MU Computer Science faculty to discuss exciting fields as well as career advisement given by Computer Science industry representatives.  Prerequisites: Restricted to freshman/sophomore students who are BS Computer Science, BS Information Technology and Undeclared Engineering or Pre-Engineering may enroll in the class without permission", 
+    "GUID": "CMP_SC1000", 
+    "Hours": "1", 
+    "Prerequisites": [], 
+    "Title": "CMP_SC 1000:  Introduction to Computer Science"
+  }, 
+  {
+    "Description": "(same as ECE 4340; cross-leveled with CMP_SC 7340, ECE 7340). Covers the design and development of intelligent machines, emphasizing topics related to sensor-based control of mobile robots.  Includes mechanics and motor control, sensor characterization, reactive behaviors and control architectures.", 
+    "GUID": "CMP_SC4730", 
+    "Hours": "4", 
+    "Prerequisites": [
+      "CMP_SC2050", 
+      "STAT4710"
+    ], 
+    "Title": "CMP_SC 4730:  Building Intelligent Robots"
+  }, 
+  {
+    "Description": "A study of fundamental techniques and algorithms for representing and manipulating data structures. Topics include data abstraction, recursion, stacks, queues, linked lists, trees, efficient methods of sorting and searching, and Big-O analysis.", 
+    "GUID": "CMP_SC2050", 
+    "Hours": "3", 
+    "Prerequisites": [
+      "CMP_SC2050"
+    ], 
+    "Title": "CMP_SC 2050:  Algorithm Design and Programming II"
+  }
+]

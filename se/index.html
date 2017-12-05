@@ -4,43 +4,66 @@
 <head>
 
     <title>Course Mapper</title>
-    <!-- Include this later when d3 gets brought in -->
+    
     <!--<script src="d3.js"></script>-->
     <script src="jquery.js"></script>
+    <!-- Separate script file for requesting and receiving JSON file from backend API -->
+    <script src="JSON_request.js"></script>
+    <!-- File which contains example json file (for testing purposes) -->
+    <script type="text/javascript" src="course_info.json"></script>
     <link rel="stylesheet" src="main.css" href="main.css">
     
+<!-- START OF COPIED CODE -->
+    <svg width="960" height="2000"></svg>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
+        
+    var course_info_JSON = 
+
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height"),
+        g = svg.append("g").attr("transform", "translate(40,0)");
+
+    var tree = d3.tree()
+        .size([height, width - 160]);
+
+    var stratify = d3.stratify()
+        .parentId(function(d) { return d.id.substring(0, d.id.lastIndexOf(".")); });
+
+    d3.json("course_info_JSON", function(error, data) {
+      if (error) throw error;
+
+      var root = stratify(data)
+          .sort(function(a, b) { return (a.height - b.height) || a.id.localeCompare(b.id); });
+
+      var link = g.selectAll(".link")
+        .data(tree(root).links())
+        .enter().append("path")
+          .attr("class", "link")
+          .attr("d", d3.linkHorizontal()
+              .x(function(d) { return d.y; })
+              .y(function(d) { return d.x; }));
+    
+      var node = g.selectAll(".node")
+        .data(root.descendants())
+        .enter().append("g")
+          .attr("class", function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
+          .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+
+      node.append("circle")
+          .attr("r", 2.5);
+
+      node.append("text")
+          .attr("dy", 3)
+          .attr("x", function(d) { return d.children ? -8 : 8; })
+          .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+          .text(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1); });
+});
+        
     <script>
     
-    var json_request = "http://evanescence.herokuapp.com/get_classes?num=6&department=CMP_SC"
-    
-    // Maybe give this method a try later...
-    /*
-    $.getJSON( json_request, function( data ) {
-        var items = [];
-        $.each( data, function( key, val ) {
-            items.push( "<li id='" + key + "'>" + val + "</li>" );
-        });
-
-        $( "<ul/>", {
-            "class": "my-new-list",
-            html: items.join( "" )
-        }).appendTo( "body" );
-    });
-    */
-    
-    // Just some code to try to help figure out how this works
-    $.getJSON( json_request, function( data ) {
-        console.log("success");
-    })
-        .done(function() {
-            console.log( "second success" );
-        })
-        .fail(function() {
-            console.log( "error" );
-        })
-        .always(function() {
-            console.log( "complete" );
-        });
+    // Include other scripts here...
         
     </script>
 

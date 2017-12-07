@@ -8,12 +8,14 @@
         <style>
             body {
                 margin: 0px;
+                background-color: whitesmoke;
             }
             .column {
                 float: left;
                 position: absolute;
                 z-index: -20;
             }
+            
             #decisionPane, #descriptionPane {
                 width: calc(25% - 4px - 20px);
                 height: calc(100vh - 4px);
@@ -129,13 +131,13 @@
                 root;
 
             var tree = d3.layout.tree()
-                .size([height, width + 700]);
+                .size([height, width + 900]);
 
             var diagonal = d3.svg.diagonal()
                 .projection(function(d) { return [d.y, d.x]; });
 
             var svg = d3.select("body").append("svg")
-                .attr("width", width + margin.right + margin.left)
+                .attr("width", width + margin.right + margin.left + 800)
                 .attr("height", height + margin.top + margin.bottom)
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -145,7 +147,7 @@
 
               root = flare;
               root.x0 = height / 2;
-              root.y0 = 0;
+              root.y0 = (width + 900) / 2;
 
               function collapse(d) {
                 if (d.children) {
@@ -159,7 +161,7 @@
               update(root);
             });
 
-            d3.select(self.frameElement).style("height", "800px");
+            d3.select(self.frameElement).style("height", "1000px");
 
             function update(source) {
 
@@ -168,7 +170,7 @@
                   links = tree.links(nodes);
 
               // Normalize for fixed-depth.
-              nodes.forEach(function(d) { d.y = d.depth * 300; });
+              nodes.forEach(function(d) { d.y = d.depth * 250; });
 
               // Update the nodes…
               var node = svg.selectAll("g.node")

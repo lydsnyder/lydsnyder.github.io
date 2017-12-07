@@ -135,8 +135,7 @@
                 .projection(function(d) { return [d.y, d.x]; });
 
             var svg = d3.select("body").append("svg")
-                //.attr("width", width + margin.right + margin.left)
-                .attr("width", 1000)
+                .attr("width", width + margin.right + margin.left)
                 .attr("height", height + margin.top + margin.bottom)
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -169,7 +168,7 @@
                   links = tree.links(nodes);
 
               // Normalize for fixed-depth.
-              nodes.forEach(function(d) { d.y = d.depth * 400; });
+              nodes.forEach(function(d) { d.y = d.depth * 350; });
 
               // Update the nodes…
               var node = svg.selectAll("g.node")

@@ -14,6 +14,20 @@
     
     <link rel="stylesheet" src="main.css" href="main.css">
     
+    <style>
+
+        .links line {
+          stroke: #999;
+          stroke-opacity: 0.6;
+        }
+
+        .nodes circle {
+          stroke: #fff;
+          stroke-width: 1.5px;
+        }
+
+    </style>
+    
 <!-- PLAN OF ATTACK 
 
     * For this, we will use a 2-D array
@@ -29,18 +43,12 @@
     
     
 <!-- START OF COPIED CODE -->
-    <svg width="960" height="2000"></svg>
+    <svg width="960" height="600"></svg>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
         
     var json_request_text = "http://evanescence.herokuapp.com/get_classes?num=36&department=CMP_SC";
     var course_info_JSON;
-        
-    function generate_tree( courses, requirements, k ) {
-        for( i = 0; i < (num_courses - k); i++ ) {
-            
-        }
-    }
 
     $.getJSON( json_request_text, function( data ) {
         console.log("success");
@@ -57,28 +65,17 @@
             var requirements = [];
             var num_requirements = 0;
             var course_tree = [];
-        /*
+        
             for( i = 0; i < course_info_JSON.length; i++ ) {
-                courses[i] = course_info_JSON[i].GUID;
+                courses[i] = {
+                    "id": course_info_JSON[i].GUID,
+                    "group": 1
+                };
                 for( j = 0; j < course_info_JSON[i].Prerequisites.length; j++ ) {
                     requirements[ num_requirements + j ] = {
-                        GUID: course_info_JSON[i].Prerequisites[j],
-                        child: course_info_JSON[i].GUID
-                    };
-                    num_requirements++;
-                }
-            }
-        */
-            for( i = 0; i < course_info_JSON.length; i++ ) {
-                courses[i] = course_info_JSON[i].GUID;
-                for( j = 0; j < course_info_JSON[i].Prerequisites.length; j++ ) {
-                    requirements[ num_requirements + j ] = {
-                        GUID: course_info_JSON[i].Prerequisites[j],
-                        child: course_info_JSON[i].GUID
-                    };
-                    course_tree[i] = {
-                        name: courses[i],
-                        children: 
+                        "source": course_info_JSON[i].Prerequisites[j],
+                        "target": course_info_JSON[i].GUID,
+                        "value": 1   // Not exactly sure what this does...
                     };
                     num_requirements++;
                 }
@@ -86,73 +83,99 @@
             
             console.log( requirements );
         
-            for( i = 0; i < 36; i++ ) {
-                courses[i]
-            }
+            var revised_course_JSON = { 
+                "nodes": courses, 
+                "links": requirements 
+            };
         
-            console.log("Here's the data d3 is working with:");
-          var data = requirements;
-          console.log( data );
-
-          var root = stratify(data)
-              .sort(function(a, b) { return (a.height - b.height) || a.id.localeCompare(b.id); });
-
-          var link = g.selectAll(".link")
-            .data(tree(root).links())
-            .enter().append("path")
-              .attr("class", "link")
-              .attr("d", d3.linkHorizontal()
-                  .x(function(d) { return d.y; })
-                  .y(function(d) { return d.x; }));
-
-          var node = g.selectAll(".node")
-            .data(root.descendants())
-            .enter().append("g")
-              .attr("class", function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
-              .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-
-          node.append("circle")
-              .attr("r", 2.5);
-
-          node.append("text")
-              .attr("dy", 3)
-              .attr("x", function(d) { return d.children ? -8 : 8; })
-              .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
-              .text(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1); });
+            console.log( revised_course_JSON );
         
-        
-        /*
-            var course_depth_tree[][];
-            var num_classes_for_current_depth = 0;
-            var depth = 0;
-            
-            for( i = 0; i < course_info_JSON.length; i++ ) {
-                num_classes_for_current_depth = 0;
-                if( i == 0 ) {
-                    if( course_info_JSON[i].Prerequisites.length == 0 ) {
-                        console.log( course_info_JSON[i].GUID );
-                        course_depth_tree[0][num_classes_for_current_depth] = course_info_JSON[i].GUID;
-                        num_classes_for_current_depth++;
-                    }
-                } else {
-                    var found = false;
-                    for( j = 0; j < course_info_JSON.length; j++ ) {
-                        for( k = 0; k < course_info_JSON[j].Prerequisites.length; k++ ) {
-                            for( l = 0; l < course_depth_tree[i - 1].length; l++ ) {
-                                if( course_info_JSON[j].Prerequisites[k] == course_depth_tree[i - 1][l] ) {
-                                    found = true;
-                                }
-                            }
-                            if( !found ) {
-                                break;
-                            } else {
+// ————————————————————————————————————————————————————— //
+// CODE COPIED FROM https://bl.ocks.org/mbostock/4062045 //
+// ————————————————————————————————————————————————————— //
 
-                            }
-                        }
-                    }
-                }
-            }
-        */
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("charge", d3.forceManyBody())
+    //.force("charge", function() { return -2; })
+    .force("center", d3.forceCenter(width / 2, height / 2));
+        
+//simulation.force("charge", function() { return -3000; });
+
+d3.json( "course_info.json", function(error, graph) {
+  if (error) throw error;
+
+  var link = svg.append("g")
+      .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+      //.attr("stroke-width", function(d) { return Math.sqrt(d.value); })
+      .attr("x1", function(d) { return d.value * 100 + 50 })
+      .attr("x2", function(d) { return (d.value + d.length) * 100 + 50 });
+
+  var node = svg.append("g")
+      .attr("class", "nodes")
+    .selectAll("circle")
+    .data(graph.nodes)
+    .enter().append("circle")
+      .attr("r", 5)
+      .attr("x", function(d) { return (d.group * 200) }) 
+      .attr("fill", function(d) { return color(d.group); })
+      .attr("transform", function(d) { return "translate(" + (d.group * 100 + 50) + "," + 0 + ")"; })
+      .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));
+
+  node.append("title")
+      .text(function(d) { return d.id; });
+
+  simulation
+      .nodes(graph.nodes)
+      .on("tick", ticked);
+
+  simulation.force("link")
+      .links(graph.links);
+
+  function ticked() {
+    link
+        //.attr("x1", function(d) { return d.source.x + 1 * 100 + 50; })
+        .attr("y1", function(d) { return d.source.y; })
+        //.attr("x2", function(d) { return d.target.x + 1 * 100 + 50; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node
+        //.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+  }
+
+});
+        
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+        
         })
         .fail(function() {
             console.log( "error" );
@@ -161,54 +184,6 @@
             console.log( "complete" );
         });
         
-    
-        
-        
-        
-    
-    var svg = d3.select("svg"),
-        width = +svg.attr("width"),
-        height = +svg.attr("height"),
-        g = svg.append("g").attr("transform", "translate(40,0)");
-
-    var tree = d3.tree()
-        .size([height, width - 160]);
-
-    var stratify = d3.stratify()
-        .parentId(function(d) { return d.id.substring(0, d.id.lastIndexOf(".")); });
-
-    d3.json("http://evanescence.herokuapp.com/get_classes?num=6&department=CMP_SC", function(error, data) {
-      if (error) throw error;
-        
-      console.log("Here's the data from the d3 json request:");
-      console.log( data );
-
-      var root = stratify(data)
-          .sort(function(a, b) { return (a.height - b.height) || a.id.localeCompare(b.id); });
-
-      var link = g.selectAll(".link")
-        .data(tree(root).links())
-        .enter().append("path")
-          .attr("class", "link")
-          .attr("d", d3.linkHorizontal()
-              .x(function(d) { return d.y; })
-              .y(function(d) { return d.x; }));
-    
-      var node = g.selectAll(".node")
-        .data(root.descendants())
-        .enter().append("g")
-          .attr("class", function(d) { return "node" + (d.children ? " node--internal" : " node--leaf"); })
-          .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-
-      node.append("circle")
-          .attr("r", 2.5);
-
-      node.append("text")
-          .attr("dy", 3)
-          .attr("x", function(d) { return d.children ? -8 : 8; })
-          .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
-          .text(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1); });
-});
             
     // Include other scripts here...
         

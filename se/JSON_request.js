@@ -1,9 +1,30 @@
-var json_request = "http://evanescence.herokuapp.com/get_classes?num=6&department=CMP_SC"
+var json_request = //"http://evanescence.herokuapp.com/get_classes?num=6&department=CMP_SC"
+"http://evanescence.herokuapp.com/get_classes?num=6&department=CMP_SC";
     
+    
+/*
+
+These are the supported arguments for the request
+
+degrees = ["CSMajor","ITMajor", "MathMinor", "MusicStudiesMajor", "BusinessMinor"]
+
+Business and Music won't work until Luke and Evan set them up.
+Using them will likely result in an error.
+
+
+
+This is how a request should look
+
+http://evanescence.herokuapp.com/get_degree?deg1=CSMajor&deg2=MathMinor
+
+*/
+
+
 // Maybe give this method a try later...
 /*
 $.getJSON( json_request, function( data ) {
     var items = [];
+    console.log("Doing the thing...");
     $.each( data, function( key, val ) {
         items.push( "<li id='" + key + "'>" + val + "</li>" );
     });
@@ -22,15 +43,12 @@ $.getJSON( json_request, function( data ) {
 })
     .done(function() {
         console.log( "second success" );
-        console.log(data);
     })
     .fail(function() {
         console.log( "error" );
-        console.log(data);
     })
     .always(function() {
         console.log( "complete" );
-        console.log(data);
     });
 
 // I'll worry about this stuff later...

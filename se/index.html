@@ -99,15 +99,13 @@ var svg = d3.select("svg"),
     height = +svg.attr("height");
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
-
+        
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody())
     //.force("charge", function() { return -2; })
     .force("center", d3.forceCenter(width / 2, height / 2));
         
-//simulation.force("charge", function() { return -3000; });
-
 d3.json( "course_info.json", function(error, graph) {
   if (error) throw error;
 

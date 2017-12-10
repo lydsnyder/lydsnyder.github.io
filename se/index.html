@@ -47,13 +47,14 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
         
-    var json_request_text = "http://evanescence.herokuapp.com/get_classes?num=36&department=CMP_SC";
+    //var json_request_text = "http://evanescence.herokuapp.com/get_classes?num=200&department=CMP_SC";
+    var json_request_text = "http://evanescence.herokuapp.com/get_degree?deg1=CSMajor";
     var course_info_JSON;
 
     $.getJSON( json_request_text, function( data ) {
         console.log("success");
         //console.log(data);
-        course_info_JSON = data;
+        course_info_JSON = data.CSMajor;
     })
         .done(function() {
             console.log( "second success" );
@@ -62,9 +63,19 @@
         
             // Create list of verticies & requirements
             var courses = [];
+            
             var requirements = [];
             var num_requirements = 0;
-            var course_tree = [];
+            var course_tree = [];           // Maybe don't use this...
+            var courses_assigned = [];      // List of courses we've already assigned
+            //var temp_courses_assigned = [];
+            var courses_assigned_flag = [];
+            var num_courses_assigned = 0;   // Number of courses we've already assigned
+            var temp_num_courses_assigned = 0;
+            var num_courses_per_group = [];
+            var depth = 0;
+            var found = true;
+            var no_prerecs = true;
         
             for( i = 0; i < course_info_JSON.length; i++ ) {
                 courses[i] = {
@@ -80,12 +91,125 @@
                     num_requirements++;
                 }
             }
+        
+            // Iterate through groups (WE DON'T KNOW THE LENGTH IN ADVANCE)
+            // Loop while num_courses_assigned != num_courses_total
+                // Iterate through courses
+                    // Iterate through courses' prerequisites
+                        // Iterate through already assigned courses
+        
+        
+        // ~~~~~~~~~~~~~~~ START OF GROUP-DETERMINING CODE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            var num_courses_fabricated = 0;
+            var num_courses_total = course_info_JSON.length;
+            console.log( "num_courses_total: " + num_courses_total );
+        
+            for( i = 0; i < num_courses_total; i++ ) {
+                courses_assigned_flag[i] = 0;
+            }
+        
+            while( num_courses_assigned - num_courses_fabricated < num_courses_total && depth < 6 ) { 
+                temp_num_courses_assigned = 0;
+                var temp_courses_assigned = [];
+                console.log("Iterating group " + depth);
+                for( i = 0; i < num_courses_total; i++ ) {
+                    if( courses_assigned_flag[i] == 0 ) {
+                        console.log("Looking at item " + i);
+                        if( course_info_JSON[i].Prerequisites.length == 0 ) {
+                            console.log( "NO PRERECS" );
+                            found = true;
+                        } else {
+                            found = true;
+                            for( j = 0; j < course_info_JSON[i].Prerequisites.length && found; j++ ) {
+                                found = false;
+                                console.log( "pre: " + course_info_JSON[i].Prerequisites[j] );
+                                for( k = 0; k < num_courses_assigned && !found; k++ ) {
+                                    if( courses_assigned[k].id == course_info_JSON[i].Prerequisites[j] ) {
+                                        console.log( "MATCH FOUND" );
+                                        console.log( "asg: " + courses_assigned[k].id );
+                                        found = true;
+                                    }
+                                }
+                                if( !found ) {
+                                    console.log("Checking for presence of " + course_info_JSON[i].Prerequisites[j] + "...");
+                                    // Check if the prerequisite we're looking for is here at all
+                                    for( l = 0; l < num_courses_total; l++ ) {
+                                        if( courses[l].id == course_info_JSON[i].Prerequisites[j] ) {
+                                            found = true;
+                                        }
+                                    }
+                                    if( !found ) {
+                                        console.log("PREREQUISITE COMPLETELY ABSENT");
+                                        num_courses_per_group[0]++;
+                                        courses_assigned[num_courses_assigned] = {
+                                            id: course_info_JSON[i].Prerequisites[j],
+                                            group: 0
+                                        };
+                                        num_courses_fabricated++;
+                                        num_courses_assigned++;
+                                        found = true;
+                                    } else {
+                                        found = false;
+                                    }
+                                }
+                            }
+                        }
+                        //console.log( "found == " + found );
+                        if( found ) {
+                            console.log( "Assigning course to courses_assigned..." );
+                            temp_courses_assigned[temp_num_courses_assigned] = {
+                                id: course_info_JSON[i].GUID,
+                                group: depth
+                            };
+                            temp_num_courses_assigned++;
+                            num_courses_per_group[depth]++;
+                            courses_assigned_flag[i] = 1;
+                        }
+                    } else {
+                        console.log("Skipping item   " + i);
+                    }
+                }
+                depth++;
+                console.log("temp_num_courses_assigned: " + temp_num_courses_assigned);
+                console.log("num_courses_assigned: " + num_courses_assigned);
+                console.log("num_courses_fabricated: " + num_courses_fabricated);
+                if(temp_num_courses_assigned == 0) {
+                    console.log("Things are now stuck");
+                    break;
+                }
+                for( i = 0; i < temp_num_courses_assigned; i++ ) {
+                    courses_assigned[num_courses_assigned] = temp_courses_assigned[i];
+                    num_courses_assigned++;
+                }
+                console.log("courses added to group " + (depth - 1) + ":");
+                console.log(temp_courses_assigned);
+                console.log("num_courses_assigned: " + num_courses_assigned);
+            }
+        // ~~~~~~~~~~~~~~~ END OF GROUP-DETERMINING CODE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
             
-            console.log( requirements );
+            console.log( "courses_assigned" );
+            console.log( courses_assigned );
+            //console.log( requirements );
+        
+            var courses_not_assigned = [];
+            var counter = 0;
+            console.log( "courses_not_assigned" );
+            for( i = 0; i < num_courses_total; i++ ) {
+                if( courses_assigned_flag[i] == 0 ) {
+                    courses_not_assigned[counter] = course_info_JSON[i];
+                    counter++;
+                }
+            }
+            console.log( courses_not_assigned );
+            var faux_links = [
+                { source: "CMP_SC3050", target: "CMP_SC4520", value: 1, length: 1},
+                { source: "CMP_SC2050", target: "CMP_SC3050", value: 1, length: 1}
+            ];
         
             var revised_course_JSON = { 
-                "nodes": courses, 
-                "links": requirements 
+                "nodes": courses_assigned, 
+                "links": faux_links
             };
         
             console.log( revised_course_JSON );
@@ -106,8 +230,9 @@ var simulation = d3.forceSimulation()
     //.force("charge", function() { return -2; })
     .force("center", d3.forceCenter(width / 2, height / 2));
         
-d3.json( "course_info.json", function(error, graph) {
-  if (error) throw error;
+//d3.json( revised_course_JSON, function(error, graph) {
+//  if (error) throw error;
+function fakeD3Load(graph) {
 
   var link = svg.append("g")
       .attr("class", "links")
@@ -134,6 +259,14 @@ d3.json( "course_info.json", function(error, graph) {
 
   node.append("title")
       .text(function(d) { return d.id; });
+    
+  node.append("text")
+      .text(function(d) { return d.id; });
+          //.attr("x", function(d) { return 10 })
+          //.attr("dy", ".35em")
+          //.attr("text-anchor", function(d) { return "start"; })
+          //.text(function(d) { return d.id; })
+          //.style("fill-opacity", 1e-6);
 
   simulation
       .nodes(graph.nodes)
@@ -154,8 +287,11 @@ d3.json( "course_info.json", function(error, graph) {
         .attr("cy", function(d) { return d.y; });
   }
 
-});
+//});
+};
         
+fakeD3Load(revised_course_JSON);
+    
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
   d.fx = d.x;
